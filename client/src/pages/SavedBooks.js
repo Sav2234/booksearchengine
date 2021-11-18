@@ -4,6 +4,9 @@ import { Jumbotron, Container, CardColumns, Card, Button } from 'react-bootstrap
 import { getMe, deleteBook } from '../utils/API';
 import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
+import { QUERY_ME } from '../utils/queries';
+import { useMutation, useQuery } from '@apollo/client';
+
 
 const SavedBooks = () => {
   const [userData, setUserData] = useState({});
@@ -69,14 +72,14 @@ const SavedBooks = () => {
     <>
       <Jumbotron fluid className='text-light bg-dark'>
         <Container>
-          <h1>Viewing saved books!</h1>
+          <h1>Viewing saved book!</h1>
         </Container>
       </Jumbotron>
       <Container>
         <h2>
           {userData.savedBooks.length
-            ? `Viewing ${userData.savedBooks.length} saved ${userData.savedBooks.length === 1 ? 'book' : 'books'}:`
-            : 'You have no saved books!'}
+            ? `Viewing ${userData.savedBooks.length} saved ${userData.savedBooks.length === 1 ? 'book' : 'book'}:`
+            : 'You have no saved book!'}
         </h2>
         <CardColumns>
           {userData.savedBooks.map((book) => {

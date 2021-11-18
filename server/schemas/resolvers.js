@@ -1,42 +1,49 @@
-const { Thought } = require('../models');
+const { Book } = require('../models');
 
 const resolvers = {
   Query: {
-    thoughts: async () => {
-      return Thought.find().sort({ createdAt: -1 });
+    me: async (parent, args, context) => {
+      if (context.user) {
+        return Profile.findOne({ _id: context.user._id });
+      }
+      throw new AuthenticationError('You need to be logged in!');
     },
 
-    thought: async (parent, { thoughtId }) => {
-      return Thought.findOne({ _id: thoughtId });
+    books: async () => {
+      return Book.find().sort({ createdAt: -1 });
+    },
+
+    book: async (parent, { bookId }) => {
+      return Book.findOne({ _id: bookId });
     },
   },
 
   Mutation: {
-    addThought: async (parent, { thoughtText, thoughtAuthor }) => {
-      return Thought.create({ thoughtText, thoughtAuthor });
+    saveBook: async (parent, { bookText, bookAuthor }) => {
+      return Book.create({ bookText, bookAuthor });
     },
-    addComment: async (parent, { thoughtId, commentText }) => {
-      return Thought.findOneAndUpdate(
-        { _id: thoughtId },
-        {
-          $addToSet: { comments: { commentText } },
-        },
-        {
-          new: true,
-          runValidators: true,
-        }
-      );
+  //   addComment: async (parent, { bookId, commentText }) => {
+  //     return Book.findOneAndUpdate(
+  //       { _id: bookId },
+  //       {
+  //         $addToSet: { comments: { commentText } },
+  //       },
+  //       {
+  //         new: true,
+  //         runValidators: true,
+  //       }
+  //     );
+  //   },
+    removeBook: async (parent, { bookId }) => {
+      return Book.findOneAndDelete({ _id: bookId });
     },
-    removeThought: async (parent, { thoughtId }) => {
-      return Thought.findOneAndDelete({ _id: thoughtId });
-    },
-    removeComment: async (parent, { thoughtId, commentId }) => {
-      return Thought.findOneAndUpdate(
-        { _id: thoughtId },
-        { $pull: { comments: { _id: commentId } } },
-        { new: true }
-      );
-    },
+  //   removeComment: async (parent, { bookId, commentId }) => {
+  //     return Book.findOneAndUpdate(
+  //       { _id: bookId },
+  //       { $pull: { comments: { _id: commentId } } },
+  //       { new: true }
+  //     );
+  //   },
   },
 };
 
